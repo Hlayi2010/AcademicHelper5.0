@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Academic Helper — Grade 8 (Math & Natural Science)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: linear-gradient(135deg,#f3f8ff,#dceeff);
+    --card: #d6d6d6e7;
+    --text: #000000;
+    --muted: #475569;
+    --accent: #2563eb;
+    --accent-dark: #1e40af;
+    --success: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    min-height:100vh;
+  }
+  header {
+    padding:18px 22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background: rgba(18, 72, 88, 0.6);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 8px rgba(144, 146, 22, 0.233);
+  }
+  header h1 { margin:0; font-size:18px; }
+  header .meta { text-align:right; font-size:13px; color:var(--muted); }
+  main { padding:20px; max-width:1000px; margin:18px auto; }
+  .page { display:none; }
+  .page.active { display:block; }
+  .card {
+    background:var(--card);
+    border-radius:12px;
+    padding:18px;
+    box-shadow: 0 6px 18px rgba(30,41,59,0.06);
+    margin-bottom:16px;
+  }
+  .row { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  button {
+    background:var(--accent);
+    color:rgb(255, 255, 255);
+    border:none;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow: 0 6px 12px rgba(37,99,235,0.15);
+  }
+  button.ghost {
+    background:transparent;
+    color:var(--accent);
+    box-shadow:none;
+    border:1px solid rgba(37,99,235,0.12);
+  }
+  button.small { padding:8px 10px; font-size:14px; border-radius:8px; }
+  input, select, textarea {
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #e6eefc;
+    font-size:14px;
+    background:#fbfdff;
+  }
+  .muted { color:var(--muted); font-size:13px; }
+  .flex-between { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .progress-container {
+    background:#7595ce;
+    border-radius:999px;
+    height:18px;
+    width:100%;
+    overflow:hidden;
+  }
+  .progress-bar {
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#7c3aed,#3b82f6);
+    color:white;
+    font-size:12px;
+    text-align:right;
+    padding-right:8px;
+    border-radius:999px;
+    line-height:18px;
+  }
+  .note-title { font-weight:700; margin-bottom:8px; }
+  .note-par { margin-bottom:10px; color:var(--muted); line-height:1.5; }
+  .subject-tabs { display:flex; gap:6px; margin-bottom:12px; }
+  .subject-tabs button { background:#f1f7ff; color:var(--accent); box-shadow:none; border-radius:8px; padding:8px 10px; font-weight:600; }
+  .quiz-question { font-weight:700; margin-bottom:8px; }
+  .explain { margin-top:10px; background:#fbfdff; border-left:4px solid #e6eefc; padding:10px; color:var(--muted); border-radius:6px; }
+  .links a { display:inline-block; margin-right:8px; margin-bottom:6px; color:var(--accent); }
+  footer { text-align:center; color:var(--muted); font-size:13px; margin-top:14px; }
+  nav { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .badge { margin-left:8px; font-size:14px; }
+  canvas#confetti { position:fixed; left:0; top:0; pointer-events:none; z-index:9999; }
+  pre { background:#0b1220; color:#cfe8ff; padding:12px; border-radius:8px; overflow:auto; }
+  @media (max-width:640px) {
+    header { flex-direction:column; gap:10px; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<header>
+  <div>
+    <h1>Academic Helper — Grade 8</h1>
+    <div class="muted">Mathematics & Natural Science — Terms 1–4 (Study mode)</div>
+  </div>
+  <div class="meta">
+    <div id="userMeta">Not logged in</div>
+    <div style="margin-top:6px;">
+      <span class="muted">XP</span> <strong id="xpVal">0</strong>
+      <span class="badge" id="badgeList"></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- LOGIN / SIGNUP -->
+  <section id="auth" class="page active">
+    <div class="card">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1">
+          <label class="muted">Username</label>
+          <input id="username" placeholder="username (e.g. hlayi123)">
+        </div>
+        <div style="width:220px">
+          <label class="muted">Password</label>
+          <input id="password" type="password" placeholder="password">
+        </div>
+        <div style="min-width:160px">
+          <label class="muted">Grade</label>
+          <select id="gradeSelect">
+            <option value="grade8" selected>Grade 8</option>
+            <option value="grade9">Grade 9</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button onclick="signup()">Create account</button>
+        <button class="ghost" onclick="login()">Login</button>
+        <button class="ghost" onclick="demoLogin()">Demo account</button>
+      </div>
+      <p class="muted" style="margin-top:12px">Accounts are stored locally in your browser (for testing). Use different username to create account.</p>
+    </div>
+    <div class="card">
+      <h3>Why this app?</h3>
+      <p class="muted">This single-file app contains study notes (detailed but concise), quizzes with explanations, XP tracking, and links to Grade 8 tuition playlists. Use it to study, practice and track progress.</p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page">
+    <div class="card">
+      <div class="flex-between">
+        <div>
+          <h2 id="welcome">Welcome</h2>
+          <div class="muted">Choose study notes or quizzes below — work term-by-term.</div>
+        </div>
+        <div style="text-align:right">
+          <div class="muted">Streak: <strong id="streakVal">0</strong> days</div>
+          <div style="margin-top:8px" class="progress-container">
+            <div id="xpBar" class="progress-bar">0 XP</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px" class="row">
+        <button onclick="showPage('notes')">📘 Study Notes</button>
+        <button onclick="showPage('quiz')">📝 Quizzes</button>
+        <button onclick="showPage('tutoring')"> Tutoring Links</button>
+        <button onclick="showPage('studyguides')">Study Guides</button>
+        <button onclick="showPage('pastpapers')">Past Papers</button>
+        <button onclick="showPage('vr')">Virtual Reality</button>
+        <button onclick="showPage('games')">🎥Games</button>
+        <button onclick="showPage('study planner')">🎥Study Planner</button>
+        <button onclick="showPage('progress')">📊 Progress</button>
+        <button class="ghost" onclick="exportData()">Export data</button>
+        <button class="ghost" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Quick study tips</h3>
+      <ol class="muted">
+        <li>Read the topic note first, then try the quiz for that term & subject.</li>
+        <li>If you get a question wrong, read the explanation and re-take the quiz.</li>
+        <li>Use the progress tracker to watch improvement — consistency builds mastery.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="notes" class="page">
+    <div class="card">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+        <div style="flex:1">
+          <label class="muted">Subject</label>
+          <select id="notesSubject" onchange="renderNotes()">
+            <option value="Math">Mathematics</option>
+            <option value="NS">Natural Science</option>
+          </select>
+        </div>
+        <div style="width:180px">
+          <label class="muted">Term</label>
+          <select id="notesTerm" onchange="renderNotes()">
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+            <option value="Term 4">Term 4</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Text size</label>
+          <select id="textSize" onchange="adjustTextSize()">
+            <option value="14">Small</option>
+            <option value="16" selected>Normal</option>
+            <option value="18">Large</option>
+          </select>
+        </div>
+      </div>
+      <div id="notesContent" class="card"></div>
+      <div style="margin-top:12px">
+        <button onclick="showPage('dashboard')">Back</button>
+        <button class="ghost" onclick="printNotes()">Print notes</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="page">
+    <div class="card">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1">
+          <label class="muted">Subject</label>
+          <select id="quizSubject" onchange="prepareQuiz()">
+            <option value="Math">Mathematics</option>
+            <option value="NS">Natural Science</option>
+          </select>
+        </div>
+        <div style="width:160px">
+          <label class="muted">Term</label>
+          <select id="quizTerm" onchange="prepareQuiz()">
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+            <option value="Term 4">Term 4</option>
+          </select>
+        </div>
+        <div style="width:160px">
+          <label class="muted">Difficulty</label>
+          <select id="quizDiff" onchange="prepareQuiz()">
+            <option value="mix" selected>Mix</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="quizBox" class="card" style="margin-top:12px">
+        <div id="quizIntro">
+          <h3>Quiz ready</h3>
+          <p class="muted">Choose term & subject, then press <strong>Start Quiz</strong>. You will get explanations after each question.</p>
+          <div style="display:flex;gap:8px">
+            <button onclick="startQuiz()">Start Quiz</button>
+            <button class="ghost" onclick="showPage('dashboard')">Back</button>
+          </div>
+        </div>
+
+        <div id="quizArea" style="display:none"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TUTORING LINKS -->
+  <section id="tutoring" class="page">
+    <div class="card">
+      <h3>🎥 Grade 8 Tutoring Playlists</h3>
+      <div class="links" id="tutoringLinks"></div>
+      <p class="muted">These playlists are curated for Grade 8 Mathematics and Natural Science topics. Open in a new tab to study with video explanations.</p>
+      <button onclick="showPage('dashboard')">Back</button>
+    </div>
+  </section>
+
+  <!-- Study Guides -->
+  <section id="studyguides" class="page">
+    <div class="card">
+      <h3>🎥 Grade 8 Study Guides</h3>
+      <div class="guides" id="studyguidesLinks"></div>
+      <p class="muted">These playlists are curated for Grade 8 Mathematics and Natural Science topics. Open in a new tab to study with video explanations.</p>
+      <button onclick="showPage('dashboard')">Back</button>
+    </div>
+  </section>
+
+  <!-- Past Papers -->
+  <section id="pastpapers" class="page">
+    <div class="card">
+      <h3>🎥 Grade 8 Past Papers</h3>
+      <div class="links" id="pastpapersLinks"></div>
+      <p class="muted">These playlists are curated for Grade 8 Mathematics and Natural Science topics. Open in a new tab to study with video explanations.</p>
+      <button onclick="showPage('dashboard')">Back</button>
+    </div>
+  </section>
+
+  <!-- Virtual reality -->
+  <section id="vr" class="page">
+    <div class="card">
+      <h3>🎥 Grade 8 and 9 VR</h3>
+      <div class="links" id="vrLinks"></div>
+      <p class="muted">These playlists are curated for Grade 8 Mathematics and Natural Science topics. Open in a new tab to study with video explanations.</p>
+      <button onclick="showPage('dashboard')">Back</button>
+    </div>
+  </section>
+
+ 
+  
+  <!-- Games -->
+  <section id="games" class="page">
+    <div class="card">
+      <h3>🎥Games</h3>
+      <div class="games" id="gamesLinks"></div>
+      <p class="muted">These playlists are curated for Grade 8 Mathematics and Natural Science topics. Open in a new tab to study with video explanations.</p>
+      <button onclick="showPage('dashboard')">Back</button>
+    </div>
+  </section>
+
+   <!-- Study planner -->
+  <section id="study planner" class="page">
+    <div class="card">
+      <h3>🎥Study Planner</h3>
+      <div class="study planner" id="studyplannerLinks"></div>
+      <p class="muted">These playlists are curated for Grade 8 Mathematics and Natural Science topics. Open in a new tab to study with video explanations.</p>
+      <button onclick="showPage('dashboard')">Back</button>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section id="progress" class="page">
+    <div class="card">
+      <h3>Progress Tracker</h3>
+      <div id="progressList" class="muted"></div>
+      <div style="margin-top:12px">
+        <button onclick="clearProgress()" class="ghost">Clear progress</button>
+        <button onclick="showPage('dashboard')">Back</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="muted">Built for Grade 8 study practice — Maths & Natural Science. Data saved locally in browser.</div>
+  </footer>
+</main>
+
+<script>
+/* =======================
+   App data and utilities
+   ======================= */
+const DEV_DEMO = true;
+let users = JSON.parse(localStorage.getItem("ah_users") || "{}");
+let xpData = JSON.parse(localStorage.getItem("ah_xp") || "{}");
+let progress = JSON.parse(localStorage.getItem("ah_progress") || "[]");
+
+let currentUser = null; // username string
+let activeGrade = "grade8"; // grade8 default
+let quizState = null;
+
+/* ------------ Helpers -------------- */
+function saveAll() {
+  localStorage.setItem("ah_users", JSON.stringify(users));
+  localStorage.setItem("ah_xp", JSON.stringify(xpData));
+  localStorage.setItem("ah_progress", JSON.stringify(progress));
+}
+function uid(){ return 'u'+Math.random().toString(36).slice(2,9); }
+function nowStr(){ return new Date().toLocaleString(); }
+
+/* -------- Confetti simple --------- */
+const confettiCanvas = document.getElementById("confetti");
+const confettiCtx = confettiCanvas.getContext("2d");
+let confettiPieces = [];
+function resizeCanvas(){ confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; }
+window.addEventListener('resize', resizeCanvas); resizeCanvas();
+function spawnConfetti(x,y,n=30){
+  for(let i=0;i<n;i++){
+    confettiPieces.push({
+      x,y,
+      r:Math.random()*6+4,
+      c: `hsl(,80%,60%)`,
+      vx: (Math.random()-0.5)*6,
+      vy: (Math.random()-1.5)*6
+    });
+  }
+}
+function drawConfetti(){
+  confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  confettiPieces.forEach((p,i)=>{
+    confettiCtx.beginPath();
+    confettiCtx.fillStyle = p.c;
+    confettiCtx.ellipse(p.x, p.y, p.r, p.r*0.7, Math.PI*0.2, 0, Math.PI*2);
+    confettiCtx.fill();
+    p.x += p.vx; p.y += p.vy; p.vy += 0.15;
+    if(p.y > confettiCanvas.height+20) confettiPieces.splice(i,1);
+  });
+  requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
+
+/* ---------- Data: Notes & Quizzes ---------- */
+
+/*
+Structure:
+data = {
+  grade8: {
+    notes: { Math: { "Term 1": "...", ... }, NS: { ... } },
+    quizzes: { Math: { "Term 1": [ {q,a,explanation, difficulty}, ... ] } , NS: {...} }
+  }
+}
+*/
+const data = {
+  grade8: {
+    notes: {
+      Math: {
+        "Term 1": {
+          title: "Numbers, Integers, Exponents, Basic Algebra",
+          paragraphs: [
+`Numbers & place value — Understand whole numbers, place value, comparing large numbers and rounding. Practice writing numbers in words and digits and compare using <, >, =. Rounding to 10s, 100s and 1000s helps estimate answers in exam questions.`,
+`Integers & operations — Integers include positives and negatives. Use a number line for addition and subtraction. Remember -(-a) = +a. Solve simple problems with temperature changes and bank balances using integers.`,
+`Exponents & notation — Learn square and cube numbers (e.g. 5² = 25, 3³ = 27). Laws of exponents for multiplication (a^m × a^n = a^(m+n)).`,
+`Algebra basics — Understand variables, expressions, simplifying like terms and solving one-step equations (e.g. 5x = 20 → x = 4). Use inverse operations to solve unknowns.`
+          ]
+        },
+        "Term 2": {
+          title: "Geometry basics: Angles, Triangles & Quadrilaterals",
+          paragraphs: [
+`Types of angles — Acute (<90°), right (90°), obtuse (90°–180°), straight line (180°). Use angle rules for parallel lines and transversal to find missing angles.`,
+`Triangles — Classification by sides (equilateral, isosceles, scalene) and by angles (acute, right, obtuse). Sum of interior angles of any triangle = 180°. Use properties to solve for unknown angles.`,
+`Quadrilaterals — Properties of squares, rectangles, parallelograms and trapeziums. Opposite sides of a parallelogram are equal and parallel; diagonals have special properties.`,
+`Perimeter & area — Practice formulas: rectangle area = lw; triangle area = 1/2 × base × height. Always label units and show working steps.`
+          ]
+        },
+        "Term 3": {
+          title: "Data handling, Averages, Probability & Financial Maths",
+          paragraphs: [
+`Collecting & presenting data — Learn bar graphs, histograms (grouped data), pie charts and tables. Label axes and choose suitable scales.`,
+`Averages — Mean (add numbers and divide by count), median (middle value), mode (most frequent). Know when each average is useful.`,
+`Probability — Understand chance language (certain, likely, unlikely, impossible) and calculate simple probabilities as favourable outcomes/total outcomes.`,
+`Financial maths — Percentages, profit & loss, simple interest basics. Convert fractions to percentages and calculate percentage increase/decrease.`
+          ]
+        },
+        "Term 4": {
+          title: "Pythagoras, Transformations & 3D basics",
+          paragraphs: [
+`Pythagoras' theorem — In right-angled triangles: a² + b² = c² (c is hypotenuse). Use to find missing side lengths and solve real problems.`,
+`Transformations — Translation (slide), rotation (turn), reflection (flip) and enlargement (scale). Identify centre of rotation and scale factor.`,
+`3D objects — Recognise cubes, cuboids, cylinders and find surface area and volume. E.g. volume of cuboid = length × width × height. Sketch nets to visualise surfaces.`
+          ]
+        }
+      },
+      NS: {
+        "Term 1": {
+          title: "Cells & Life Processes",
+          paragraphs: [
+`Cell basics — Cells are the building blocks of living things. Animal cells and plant cells share structures (nucleus, cytoplasm, cell membrane) but plant cells have a cell wall and chloroplasts.`,
+`Organelle functions — Nucleus (controls cell activities), mitochondria (powerhouse — produce energy), chloroplasts (photosynthesis in plants), vacuole (storage).`,
+`Life processes — Movement, respiration, sensitivity, growth, reproduction, excretion, nutrition (MRS GREN). Understand how cells combine to form tissues, organs and systems.`
+          ]
+        },
+        "Term 2": {
+          title: "Matter, Atoms & Chemical Reactions",
+          paragraphs: [
+`Atomic structure — Protons, neutrons, electrons.`,
+`Balancing equations — Law of conservation of mass.`,
+`Acids & bases — pH scale and indicators.`,
+`Metals & non-metals — Properties and uses.`
+        ]
+        },
+        "Term 3": {
+          title: "Energy, Electricity & Heat",
+          paragraphs: [
+`Energy types — Kinetic (moving) and potential (stored). Energy transfers and transformations are central (e.g. chemical → thermal in burning).`,
+`Electric circuits — Basics of series and parallel circuits, components (cell/battery, bulb, switch, resistor). Use circuit diagrams to explain how current flows.`,
+`Heat transfer — Conduction (through solids), convection (in fluids), radiation (by waves). Understand insulation and everyday examples.`
+          ]
+        },
+        "Term 4": {
+          title: "Planet Earth, Ecosystems & Conservation",
+          paragraphs: [
+`Earth systems — Layers of Earth, weather vs climate basics, and plate movement ideas (simple understanding).`,
+`Ecosystems & food chains — Producers (plants), consumers (herbivores/carnivores), decomposers. Energy flow is one-way from sun → producers → consumers.`,
+`Biodiversity & conservation — Importance of conserving habitats and sustainable use of resources. Human impact and simple conservation strategies.`
+          ]
+        }
+      }
+    },
+    quizzes: {
+      // Each quiz item: { q, a, explanation, difficulty }
+      Math: {
+        "Term 1": [
+          { q:"Write 4 305 020 in words", a:"Four million three hundred and five thousand and twenty", explanation:"Break into millions, thousands and tens.", difficulty:"medium" },
+
+{ q:"Calculate: -9 + 14", a:"5", explanation:"14 - 9 = 5.", difficulty:"easy" },
+
+{ q:"Evaluate: 7²", a:"49", explanation:"7 × 7 = 49.", difficulty:"easy" },
+
+{ q:"Solve: x + 8 = 21", a:"13", explanation:"Subtract 8 from both sides.", difficulty:"easy" },
+
+{ q:"Simplify: 4y + 6y", a:"10y", explanation:"Combine like terms.", difficulty:"easy" },
+
+{ q:"What is √81?", a:"9", explanation:"9 × 9 = 81.", difficulty:"easy" },
+
+{ q:"Convert 3/4 to a percentage", a:"75%", explanation:"3/4 = 0.75 × 100 = 75%.", difficulty:"medium" },
+
+{ q:"Evaluate: 3 × (4 + 2)", a:"18", explanation:"Add inside brackets first: 6 × 3 = 18.", difficulty:"medium" },
+
+{ q:"Solve: 2x = 18", a:"9", explanation:"Divide both sides by 2.", difficulty:"easy" },
+
+{ q:"What is the value of 10³?", a:"1000", explanation:"10 × 10 × 10 = 1000.", difficulty:"easy" }
+        ],
+        "Term 2": [
+          { q:"How many degrees are in a triangle?", a:"180", explanation:"Sum of interior angles = 180°.", difficulty:"easy" },
+
+{ q:"What type of angle is 120°?", a:"Obtuse", explanation:"Greater than 90° but less than 180°.", difficulty:"easy" },
+
+{ q:"Area of rectangle 12 × 5?", a:"60", explanation:"Area = l × w.", difficulty:"easy" },
+
+{ q:"Perimeter of triangle with sides 5,6,7?", a:"18", explanation:"Add all sides.", difficulty:"medium" },
+
+{ q:"What shape has 4 equal sides and 4 right angles?", a:"Square", explanation:"Definition of square.", difficulty:"easy" },
+
+{ q:"If one angle is 45° and another is 65°, find the third.", a:"70°", explanation:"180 - 45 - 65 = 70°.", difficulty:"medium" },
+
+{ q:"Area of triangle with base 10 and height 6?", a:"30", explanation:"½ × 10 × 6 = 30.", difficulty:"medium" },
+
+{ q:"How many sides does a hexagon have?", a:"6", explanation:"Hexagon = 6 sides.", difficulty:"easy" },
+
+{ q:"Name a quadrilateral with opposite sides parallel.", a:"Parallelogram", explanation:"Opposite sides are equal and parallel.", difficulty:"medium" },
+
+{ q:"What is a right angle?", a:"90°", explanation:"Exactly 90 degrees.", difficulty:"easy" }
+        ],
+        "Term 3": [
+          { q:"Mean of 5, 10, 15?", a:"10", explanation:"(5+10+15)/3 = 10.", difficulty:"easy" },
+
+{ q:"Mode of 2,2,3,4,4,4,5?", a:"4", explanation:"Most frequent number.", difficulty:"easy" },
+
+{ q:"Probability of rolling a 3 on a fair die?", a:"1/6", explanation:"One favourable outcome out of 6.", difficulty:"easy" },
+
+{ q:"Convert 0.2 to percentage", a:"20%", explanation:"0.2 × 100 = 20%.", difficulty:"easy" },
+
+{ q:"Increase 50 by 20%", a:"60", explanation:"20% of 50 = 10. 50+10=60.", difficulty:"medium" },
+
+{ q:"Median of 3,5,7,9,11?", a:"7", explanation:"Middle value.", difficulty:"easy" },
+
+{ q:"If cost price is 100 and selling price is 120, profit?", a:"20", explanation:"120 - 100 = 20.", difficulty:"easy" },
+
+{ q:"Probability of picking red from 3 red, 2 blue?", a:"3/5", explanation:"3 red out of total 5.", difficulty:"medium" },
+
+{ q:"Simple interest on R500 at 10% for 1 year?", a:"50", explanation:"10% of 500 = 50.", difficulty:"medium" },
+
+{ q:"Range of 4,8,12,16?", a:"12", explanation:"16 - 4 = 12.", difficulty:"medium" }
+        ],
+        "Term 4": [
+         { q:"Find hypotenuse if legs are 5 and 12.", a:"13", explanation:"5² + 12² = 25 + 144 = 169 → √169 = 13.", difficulty:"medium" },
+
+{ q:"Volume of cuboid 6×4×3?", a:"72", explanation:"6×4×3 = 72.", difficulty:"easy" },
+
+{ q:"What is a rotation?", a:"A turn around a point", explanation:"Rotation turns shape about a centre.", difficulty:"easy" },
+
+{ q:"Surface area of cube side 3?", a:"54", explanation:"6 × (3×3=9) = 54.", difficulty:"medium" },
+
+{ q:"Find missing side if c=10 and one leg=6.", a:"8", explanation:"6² + b² = 100 → 36 + b² = 100 → b²=64 → b=8.", difficulty:"hard" },
+
+{ q:"What is a translation?", a:"A slide", explanation:"Moves shape without flipping or rotating.", difficulty:"easy" },
+
+{ q:"Volume of cube side 4?", a:"64", explanation:"4³ = 64.", difficulty:"easy" },
+
+{ q:"If scale factor is 2, what happens to size?", a:"It doubles", explanation:"Each side length doubles.", difficulty:"medium" },
+
+{ q:"What is a reflection?", a:"A flip over a line", explanation:"Mirror image over a line.", difficulty:"easy" },
+
+{ q:"Find area of square side 9.", a:"81", explanation:"9×9=81.", difficulty:"easy" }
+      ]},
+      NS: {
+        "Term 1": [
+          { q:"What is the basic unit of life?", a:"Cell", explanation:"All living organisms are made of cells.", difficulty:"easy" },
+
+{ q:"Which organelle produces energy?", a:"Mitochondria", explanation:"Powerhouse of the cell.", difficulty:"easy" },
+
+{ q:"What structure protects plant cells?", a:"Cell wall", explanation:"Rigid outer layer.", difficulty:"easy" },
+
+{ q:"What is chlorophyll used for?", a:"Photosynthesis", explanation:"Absorbs sunlight.", difficulty:"medium" },
+
+{ q:"What is an organ?", a:"A group of tissues working together", explanation:"Tissues combine to form organs.", difficulty:"medium" },
+
+{ q:"Name a unicellular organism", a:"Bacteria", explanation:"Made of one cell.", difficulty:"medium" },
+
+{ q:"What does cytoplasm do?", a:"Holds organelles", explanation:"Jelly-like substance.", difficulty:"easy" },
+
+{ q:"Function of cell membrane?", a:"Controls entry and exit", explanation:"Regulates substances.", difficulty:"easy" },
+
+{ q:"Process of cell division?", a:"Mitosis", explanation:"Cells divide to grow and repair.", difficulty:"hard" },
+
+{ q:"What system transports blood?", a:"Circulatory system", explanation:"Heart and blood vessels.", difficulty:"medium" }
+        ],
+        "Term 2": [
+          { q:"State of matter with fixed shape?", a:"Solid", explanation:"Particles tightly packed.", difficulty:"easy" },
+
+{ q:"Smallest particle of element?", a:"Atom", explanation:"Basic unit of element.", difficulty:"easy" },
+
+{ q:"Gas produced in combustion?", a:"Carbon dioxide", explanation:"Common combustion product.", difficulty:"medium" },
+
+{ q:"Change from liquid to gas?", a:"Evaporation", explanation:"Particles gain energy.", difficulty:"easy" },
+
+{ q:"Periodic table arranged by?", a:"Atomic number", explanation:"Increasing proton number.", difficulty:"medium" },
+
+{ q:"Mixture of sand and water?", a:"Heterogeneous mixture", explanation:"Not uniform.", difficulty:"hard" },
+
+{ q:"Chemical symbol for sodium?", a:"Na", explanation:"From Latin Natrium.", difficulty:"medium" },
+
+{ q:"What is melting?", a:"Solid to liquid", explanation:"Heat added.", difficulty:"easy" },
+
+{ q:"Example of physical change?", a:"Melting ice", explanation:"No new substance formed.", difficulty:"medium" },
+
+{ q:"Example of chemical reaction?", a:"Rusting", explanation:"New substance formed.", difficulty:"medium" }
+        ],
+        "Term 3": [
+         { q:"Energy stored in food?", a:"Chemical energy", explanation:"Stored in bonds.", difficulty:"easy" },
+
+{ q:"Unit of force?", a:"Newton", explanation:"Symbol N.", difficulty:"medium" },
+
+{ q:"Device that stores electrical energy?", a:"Battery", explanation:"Provides power.", difficulty:"easy" },
+
+{ q:"Heat transfer through liquids?", a:"Convection", explanation:"Movement of particles.", difficulty:"medium" },
+
+{ q:"What is gravity?", a:"Force pulling objects to Earth", explanation:"Attractive force.", difficulty:"easy" },
+
+{ q:"Symbol for voltage?", a:"V", explanation:"Measured in volts.", difficulty:"medium" },
+
+{ q:"Energy from sun?", a:"Solar energy", explanation:"Renewable energy.", difficulty:"easy" },
+
+{ q:"Series circuit has how many paths?", a:"One", explanation:"Single loop.", difficulty:"easy" },
+
+{ q:"Parallel circuit advantage?", a:"Devices work independently", explanation:"If one fails others work.", difficulty:"medium" },
+
+{ q:"Energy cannot be created or destroyed is called?", a:"Law of conservation of energy", explanation:"Energy transforms only.", difficulty:"hard" }
+        ],
+        "Term 4": [
+          { q:"First organism in food chain?", a:"Producer", explanation:"Usually plants.", difficulty:"easy" },
+
+{ q:"Animals that eat plants?", a:"Herbivores", explanation:"Primary consumers.", difficulty:"easy" },
+
+{ q:"What is biodiversity?", a:"Variety of living organisms", explanation:"Different species in area.", difficulty:"medium" },
+
+{ q:"Non-renewable resource example?", a:"Coal", explanation:"Cannot be replaced quickly.", difficulty:"easy" },
+
+{ q:"Layer protecting Earth from UV?", a:"Ozone layer", explanation:"Absorbs UV radiation.", difficulty:"medium" },
+
+{ q:"Organisms breaking down dead matter?", a:"Decomposers", explanation:"Fungi and bacteria.", difficulty:"easy" },
+
+{ q:"What causes pollution?", a:"Human activities", explanation:"Waste and emissions.", difficulty:"medium" },
+
+{ q:"Renewable resource example?", a:"Wind", explanation:"Naturally replenished.", difficulty:"easy" },
+
+{ q:"Food web is?", a:"Many connected food chains", explanation:"Shows multiple feeding relationships.", difficulty:"medium" },
+
+{ q:"What is conservation?", a:"Protection of environment", explanation:"Sustainable use of resources.", difficulty:"easy" }
+      ]}
+    }
+  }
+};
+
+/* ---------- Tutoring links (Grade 8 Math & NS YouTube playlists) ---------- */
+const tutoringLinks = {
+  Math: [
+    { term:"Maths videos", link:"https://drive.google.com/drive/folders/1utwuqb6RAVrDv6hCkUo2OLHbjI4C0mQs" },
+   
+  ],
+  NS: [
+    { term:"Ns Videos", link:"https://drive.google.com/drive/folders/1c6OF7zUlD9sjx5NSDjPrJnlRTGvS2gGc" },
+    
+  ]
+};
+
+/* ---------- Study Guides (Grade 8 Math & Study Guides) ---------- */
+const studyguides = {
+  Math: [
+    { term:"Math",guide:"https://www.theanswer.co.za/wp-content/uploads/2024/04/Gr-8-Maths-2in1-Extracts_Apr-2024.pdf" }
+    
+  ],
+  NS: [
+    { term:"Ns", guide:"https://www.theanswer.co.za/wp-content/uploads/2024/04/Gr-8-Nat-Sci-3in1-Extracts_Apr-2024.pdf" }
+  
+  ]
+};
+
+/* ---------- Past Papers (Grade 8 Math & NS Past Papers) ---------- */
+const pastpapers = {
+  Math: [
+    { term:"Maths", link:"https://drive.google.com/drive/folders/11xamV2z-o13kI_0tgLFEMYQcZy8SI5KM" }
+    
+  ],
+  NS: [
+    { term:"Ns", link:"https://drive.google.com/drive/folders/1rpvJbFGmtL6lFBX6p2ZHYvh5IpjkilzZ" }
+   
+  ],
+  
+
+  
+};
+
+/* ---------- vr (Grade 8 and 9 vr) ---------- */
+const vr = {
+  Math: [
+    { term:"vr", link:"https://hlayi2010.github.io/expovr/" }
+    
+],
+  NS: [
+    { term:"vr", link:"https://drive.google.com/drive/folders/1it2K6RujT28NKqjym7r7_08ZjxVpJHPs" }
+   
+  ]
+}
+
+
+
+const games = {
+  Games: [
+    { term:"games", link:"https://hlayi2010.github.io/Puzzlehub/" }
+    
+],
+ 
+}
+
+const studyplanner = {
+  StudyPlanner: [
+    { term:"study planner", link:"https://hlayi2010.github.io/learn-path/" }
+    
+],
+ 
+}
+
+/* ========== App Functions ========== */
+
+function $(id){ return document.getElementById(id); }
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $(id).classList.add('active');
+  if(id==='dashboard') updateDashboard();
+  if(id==='tutoring') renderTutoring();
+  if(id==='studyguides') renderGuides();
+  if(id==='pastpapers') renderPapers();
+  if(id==='vr') renderVR();
+  if(id==='grade9') renderGrade9();
+  if(id==='progress') renderProgress();
+  if(id==='games')renderGames();
+  if(id==='study planner')renderStudyPlanner();
+  if(id==='notes') renderNotes();
+  if(id==='quiz') prepareQuiz();
+}
+
+/* ---- Authentication ---- */
+function signup(){
+  const u = $('username').value.trim();
+  const p = $('password').value.trim();
+  const gradeSel = $('gradeSelect').value;
+  if(!u || !p){ alert('Enter username and password'); return; }
+  if(users[u]){ alert('Username exists — pick another'); return; }
+  users[u] = { password:p, grade:gradeSel, created: nowStr() };
+  xpData[u] = xpData[u] || { xp:0, streak:0, lastDay:null, badges:[] };
+  saveAll();
+  alert('Account created — you can now login');
+}
+
+function login(){
+  const u = $('username').value.trim();
+  const p = $('password').value.trim();
+  if(!u || !p){ alert('Enter username and password'); return; }
+  if(users[u] && users[u].password === p){
+    currentUser = u;
+    activeGrade = users[u].grade || 'grade8';
+    showPage('dashboard');
+    updateDashboard();
+    renderTutoring();
+  } else {
+    alert('Invalid login');
+  }
+}
+
+function demoLogin(){
+  // create demo user if needed
+  const u = 'demo';
+  users[u] = users[u] || { password:'demo', grade:'grade8', created: nowStr() };
+  xpData[u] = xpData[u] || { xp: 20, streak: 1, lastDay: new Date().toDateString(), badges:[] };
+  saveAll();
+  currentUser = u; activeGrade = 'grade8';
+  showPage('dashboard'); updateDashboard(); renderTutoring();
+}
+
+function logout(){
+  currentUser = null;
+  $('username').value = '';
+  $('password').value = '';
+  showPage('auth');
+}
+
+/* ---- Dashboard ---- */
+function updateDashboard(){
+  if(!currentUser) { $('userMeta').innerText = 'Not logged in'; return; }
+  $('userMeta').innerText = ` •  'Grade 8'`;
+  const dataU = xpData[currentUser] || { xp:0, streak:0, badges:[] };
+  $('xpVal').innerText = dataU.xp || 0;
+  $('xpBar').style.width = Math.min(100, (dataU.xp % 100)) + '%';
+  $('xpBar').innerText = (dataU.xp || 0) + ' XP';
+  $('streakVal').innerText = dataU.streak || 0;
+  $('badgeList').innerText = (dataU.badges || []).join(' ');
+}
+
+/* ---- Notes Rendering ---- */
+function renderNotes(){
+  const subj = $('notesSubject').value;
+  const term = $('notesTerm').value;
+  const notesContainer = $('notesContent');
+  const size = parseInt($('textSize').value || 16);
+  notesContainer.style.fontSize = size + 'px';
+  const notes = data[activeGrade].notes[subj];
+  if(!notes || !notes[term]){
+    notesContainer.innerHTML = `<p class="muted">No notes for  </p>`;
+    return;
+  }
+  const block = notes[term];
+  let html = `<h3 class="note-title"> — : </h3>`;
+  block.paragraphs.forEach(p => html += `<p class="note-par"></p>`);
+  notesContainer.innerHTML = html;
+}
+
+/* ---- Print notes ---- */
+function printNotes(){
+  const subj = $('notesSubject').value;
+  const term = $('notesTerm').value;
+  const notes = data[activeGrade].notes[subj][term];
+  const w = window.open('', '_blank');
+  w.document.write(`<title> -  Notes</title>`);
+  w.document.write(`<style>body{font-family:Arial;padding:20px}</style>`);
+  w.document.write(`<h1> — </h1>`);
+  notes.paragraphs.forEach(p => w.document.write(`<p></p>`));
+  w.document.close();
+  w.print();
+}
+
+/* ---- Tutoring links ---- */
+function renderTutoring(){
+  const cont = $('tutoringLinks');
+  cont.innerHTML = '';
+  const obj = tutoringLinks;
+  for(const subj in obj){
+    let h = document.createElement('h4');
+    h.innerText = subj;
+    cont.appendChild(h);
+    obj[subj].forEach(item=>{
+      const a = document.createElement('a');
+      a.href = item.link; a.target = '_blank';
+      a.innerText = ` playlist`;
+      cont.appendChild(a);
+    });
+  }
+}
+
+/* ---- Study Guides ---- */
+function renderGuides(){
+  const cont = $('studyguidesLinks');
+  cont.innerHTML = '';
+  const obj = studyguides;
+  for(const subj in obj){
+    let h = document.createElement('h4');
+    h.innerText = subj;
+    cont.appendChild(h);
+    obj[subj].forEach(item=>{
+      const a = document.createElement('a');
+      a.href = item.guide; a.target = '_blank';
+      a.innerText = ` guides`;
+      cont.appendChild(a);
+    });
+  }
+}
+
+/* ----games ---- */
+function renderGames(){
+  const cont = $('gamesLinks');
+  cont.innerHTML = '';
+  const obj =games;
+  for(const subj in obj){
+    let h = document.createElement('h4');
+    h.innerText = subj;
+    cont.appendChild(h);
+    obj[subj].forEach(item=>{
+      const a = document.createElement('a');
+      a.href = item.link; a.target = '_blank';
+      a.innerText = ` games`;
+      cont.appendChild(a);
+    });
+  }
+}
+
+/* ----Study planner ---- */
+function renderStudyPlanner(){
+  const cont = $('studyplannerLinks');
+  cont.innerHTML = '';
+  const obj =studyplanner;
+  for(const subj in obj){
+    let h = document.createElement('h4');
+    h.innerText = subj;
+    cont.appendChild(h);
+    obj[subj].forEach(item=>{
+      const a = document.createElement('a');
+      a.href = item.link; a.target = '_blank';
+      a.innerText = ` study planner`;
+      cont.appendChild(a);
+    });
+  }
+}
+
+
+
+/* ---- Past Papers ---- */
+function renderPapers(){
+  const cont = $('pastpapersLinks');
+  cont.innerHTML = '';
+  const obj = pastpapers;
+  for(const subj in obj){
+    let h = document.createElement('h4');
+    h.innerText = subj;
+    cont.appendChild(h);
+    obj[subj].forEach(item=>{
+      const a = document.createElement('a');
+      a.href = item.link; a.target = '_blank';
+      a.innerText = ` papers`;
+      cont.appendChild(a);
+    });
+  }
+}
+
+/* ----VR ---- */
+function renderVR(){
+  const cont = $('vrLinks');
+  cont.innerHTML = '';
+  const obj = vr;
+  for(const subj in obj){
+    let h = document.createElement('h4');
+    h.innerText = subj;
+    cont.appendChild(h);
+    obj[subj].forEach(item=>{
+      const a = document.createElement('a');
+      a.href = item.link; a.target = '_blank';
+      a.innerText = ` vr`;
+      cont.appendChild(a);
+    });
+  }
+}
+
+
+
+/* ---- Quiz: prepare / start / navigation ---- */
+function prepareQuiz(){
+  // show intro, hide area
+  $('quizArea').style.display = 'none';
+  $('quizIntro').style.display = 'block';
+}
+
+function startQuiz(){
+  if(!currentUser){ alert('Please login first'); showPage('auth'); return; }
+  const subj = $('quizSubject').value;
+  const term = $('quizTerm').value;
+  const diff = $('quizDiff').value;
+  const pool = data[activeGrade].quizzes[subj][term] || [];
+  if(pool.length === 0){ alert('No quiz questions for this selection'); return; }
+  // filter by difficulty if needed
+  let chosen = pool.slice();
+  if(diff !== 'mix') chosen = chosen.filter(q=>q.difficulty === diff);
+  if(chosen.length === 0) chosen = pool.slice(); // fallback
+  // shuffle
+  chosen = chosen.sort(()=>Math.random()-0.5).slice(0, Math.min(8, chosen.length));
+  quizState = {
+    subj, term, questions: chosen, i:0, correct:0, startedAt: new Date()
+  };
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const area = $('quizArea');
+  area.style.display = 'block';
+  $('quizIntro').style.display = 'none';
+  const s = quizState;
+  if(!s) return;
+  if(s.i >= s.questions.length){
+    finishQuiz(); return;
+  }
+  const item = s.questions[s.i];
+  area.innerHTML = `
+    <div>
+      <div class="quiz-question">Q: </div>
+      <div style="margin-bottom:8px"><input id="quizAnswer" placeholder="Type your answer here"></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="submitAnswer()">Submit</button>
+        <button class="ghost" onclick="skipQuestion()">Skip</button>
+      </div>
+      <div id="quizFeedback" style="margin-top:12px"></div>
+    </div>
+  `;
+  $('quizAnswer').focus();
+}
+
+function submitAnswer(){
+  const ans = $('quizAnswer').value.trim();
+  const item = quizState.questions[quizState.i];
+  const correct = String(item.a).trim().toLowerCase();
+  const given = String(ans).trim().toLowerCase();
+  const fb = $('quizFeedback');
+  if(given === ''){ alert('Enter an answer or skip'); return; }
+  if(given === correct){
+    fb.innerHTML = `<div style="color:; font-weight:700">Correct ✅</div>
+                    <div class="explain"><strong>Explanation:</strong> </div>`;
+    quizState.correct++;
+    // award XP
+    awardXP(10);
+    spawnConfetti(innerWidth/2, 100, 24);
+  } else {
+    fb.innerHTML = `<div style="color:#b91c1c; font-weight:700">Incorrect ❌ — Correct: </div>
+                    <div class="explain"><strong>Explanation:</strong> </div>`;
+    // smaller XP for attempt
+    awardXP(2);
+  }
+  // save progress entry for this question
+  progress.push({ user: currentUser, subject: quizState.subj, term: quizState.term, question: item.q, given: ans, correct: item.a, time: nowStr() });
+  saveAll();
+  // move to next after short delay
+  setTimeout(()=>{ quizState.i++; renderQuizQuestion(); }, 900);
+}
+
+function skipQuestion(){
+  progress.push({ user: currentUser, subject: quizState.subj, term: quizState.term, question: quizState.questions[quizState.i].q, given:'(skipped)', correct: quizState.questions[quizState.i].a, time: nowStr() });
+  saveAll();
+  quizState.i++;
+  renderQuizQuestion();
+}
+
+function finishQuiz(){
+  const s = quizState;
+  const score = `/`;
+  const message = `Quiz finished! Score: `;
+  // store summary item in progress
+  progress.push({ user: currentUser, subject: s.subj, term: s.term, result: score, date: nowStr() });
+  saveAll();
+  // award streak logic
+  awardStreak();
+  alert(message);
+  // award badge if perfect
+  if(s.correct === s.questions.length){
+    awardBadge('🏆 Perfect');
+    awardXP(30);
+  } else if(s.correct >= Math.ceil(s.questions.length*0.7)){
+    awardBadge('🎯 Good attempt');
+  }
+  quizState = null;
+  showPage('dashboard');
+}
+
+/* ---- XP, Streaks, Badges ---- */
+function awardXP(n){
+  xpData[currentUser] = xpData[currentUser] || { xp:0, streak:0, lastDay:null, badges:[] };
+  xpData[currentUser].xp += n;
+  saveAll();
+  updateDashboard();
+}
+function awardStreak(){
+  const today = new Date().toDateString();
+  xpData[currentUser] = xpData[currentUser] || { xp:0, streak:0, lastDay:null, badges:[] };
+  if(xpData[currentUser].lastDay === today){
+    // same day, do nothing
+  } else {
+    // if lastDay was yesterday, increment, else reset to 1
+    const last = xpData[currentUser].lastDay ? new Date(xpData[currentUser].lastDay) : null;
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+    if(last && last.toDateString() === yesterday.toDateString()){
+      xpData[currentUser].streak = (xpData[currentUser].streak || 0) + 1;
+    } else {
+      xpData[currentUser].streak = 1;
+    }
+    xpData[currentUser].lastDay = today;
+    saveAll();
+    updateDashboard();
+  }
+}
+function awardBadge(b){
+  xpData[currentUser] = xpData[currentUser] || { xp:0, streak:0, lastDay:null, badges:[] };
+  if(!xpData[currentUser].badges.includes(b)){
+    xpData[currentUser].badges.push(b);
+    spawnConfetti(innerWidth/2, 70, 40);
+    saveAll();
+    updateDashboard();
+  }
+}
+
+/* ---- Progress page ---- */
+function renderProgress(){
+  const list = $('progressList');
+  list.innerHTML = '';
+  const userProgress = progress.filter(p=>p.user === currentUser).slice(-50).reverse();
+  if(userProgress.length===0){ list.innerHTML = '<p class="muted">No progress yet. Take a quiz to start tracking.</p>'; return; }
+  const ul = document.createElement('div');
+  userProgress.forEach(item=>{
+    const d = document.createElement('div');
+    d.style.padding = '8px 0';
+    d.style.borderBottom = '1px dashed #f0f6ff';
+    if(item.result){
+      d.innerHTML = `<strong></strong> —   • <strong></strong>`;
+    } else {
+      d.innerHTML = `<strong></strong> — Q:  • Your answer:  • Correct: `;
+    }
+    ul.appendChild(d);
+  });
+  list.appendChild(ul);
+}
+
+function clearProgress(){
+  if(!confirm('Clear all progress for current user?')) return;
+  progress = progress.filter(p=>p.user !== currentUser);
+  saveAll(); renderProgress();
+}
+
+/* ---- Export data ---- */
+function exportData(){
+  const dump = { users, xpData, progress };
+  const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'academic-helper-data.json';
+  document.body.appendChild(a); a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ---- Utilities ---- */
+function adjustTextSize(){ renderNotes(); }
+function printJSON(v){ alert(JSON.stringify(v, null, 2).slice(0,2000)); }
+
+/* ========== Init (rendering & attach) ========== */
+(function init(){
+  // ensure xpData has structure for existing users
+  Object.keys(users).forEach(u => { xpData[u] = xpData[u] || { xp:0, streak:0, lastDay:null, badges:[] }; });
+  saveAll();
+  // initial pages
+  showPage('auth');
+})();
+</script>
+</body>
